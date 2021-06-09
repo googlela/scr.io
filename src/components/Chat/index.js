@@ -1,3 +1,7 @@
+import Cookies from 'universal-cookie';
+const cookies = new Cookies();
+const name = cookies.get('name');
+
 const Chat = () => {
 	return (
 		<div className="chatbot border-2">
@@ -5,7 +9,7 @@ const Chat = () => {
 			<div className="message-box h-96 overflow-y-scroll p-2">
 				<ul className="p-2">
 					<li>
-						<p>name</p>
+						<p>{name} : </p>
 						<p>aaa</p>
 					</li>
 					<li>abc</li>

@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
-import CanvasDraw from 'react-canvas-draw';
+import React, { useState, useEffect} from 'react';
+import { ReactSketchCanvas } from "react-sketch-canvas";
+
 const Drawing = () => {
 	const [color, setcolor] = useState('#dddddd');
 
 	const [seconds, setSeconds] = React.useState(10);
-	const canvasRef = useRef(null);
 	useEffect(() => {
 		const interval = setInterval(() => {
 			setcolor('#' + Math.floor(Math.random() * 16777215).toString(16));
@@ -16,15 +16,11 @@ const Drawing = () => {
 		if (seconds > 0) {
 			setTimeout(() => setSeconds(seconds - 1), 1000);
 		} else {
-			clear();
 			setTimeout(() => setSeconds(10), 5000);
 		}
 	}, [seconds]);
 
-	const clear = () => {
-		const canvas=canvasRef.current;
-        canvas.clear()
-	};
+
 	return (
 		<div>
 			{seconds}
@@ -42,7 +38,13 @@ const Drawing = () => {
 					}}
 				/>
 			</div>
-			<CanvasDraw brushColor={color} ref={canvasRef} />
+			<ReactSketchCanvas
+			className="border-gray-600 border-2 "
+			width="600"
+			height="400"
+			strokeWidth={4}
+			strokeColor="red"
+		  />
 		</div>
 	);
 };
