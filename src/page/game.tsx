@@ -1,5 +1,5 @@
 import Profile from '../assets/image/download.jpeg';
-import Draw from '../components/Draw/index';
+import Draw from '../components/Draw';
 import Chat from '../components/Chat';
 const Game = () => {
 	return (
