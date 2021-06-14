@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import socketIOClient from 'socket.io-client';
-const ENDPOINT = 'http://127.0.0.1:4000';
+import common from '../../constant/common'
+const ENDPOINT = common.socket_base_url;
 var socket: any;
 interface CanvasProps {
 	width: number;
@@ -39,18 +40,18 @@ const Canvas = ({ width, height }: CanvasProps) => {
 	}, [startPaint]);
 
 	const paint = useCallback(
-		(event: MouseEvent) => {
-			if (isPainting) {
-				const newMousePosition = getCoordinates(event);
-
-				if (mousePosition && newMousePosition) {
-					drawLine(mousePosition, newMousePosition);
-					setMousePosition(newMousePosition);
-				}
-			}
-		},
-		[isPainting, mousePosition],
-	);
+        (event: MouseEvent) => {
+            if (isPainting) {
+                const newMousePosition = getCoordinates(event);
+                if (mousePosition && newMousePosition) {
+                    drawLine(mousePosition, newMousePosition);
+                    setMousePosition(newMousePosition);
+                }
+            }
+        },
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [isPainting, mousePosition]
+    );
 
 	useEffect(() => {
 		if (!canvasRef.current) {
@@ -103,7 +104,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
 		const canvas: HTMLCanvasElement = canvasRef.current;
 		const context = canvas.getContext('2d');
 		if (context) {
-			context.strokeStyle = 'red';
+			context.strokeStyle = 'blue';
 			context.lineJoin = 'round';
 			context.lineWidth = 5;
 
@@ -127,7 +128,8 @@ const Canvas = ({ width, height }: CanvasProps) => {
 		if (seconds > 0) {
 			setTimeout(() => setSeconds(seconds - 1), 1000);
 		} else {
-			setTimeout(() => setSeconds(10), 5000);
+			clearcanvas()
+			setTimeout(() => setSeconds(30), 5000);
 		}
 	}, [seconds, skRef]);
 
@@ -143,17 +145,24 @@ const Canvas = ({ width, height }: CanvasProps) => {
 			const context = canvas.getContext('2d');
 			if (context) {
 				// const img = Canvas.
-				context.beginPath()
-				context.strokeStyle = 'red'
-				context.fillStyle = 'blue'
-				context.lineWidth = 5
-				context.rect(data.x, data.y, 1, 1)
-				context.fill()
-				context.stroke()
+				context.beginPath();
+				context.strokeStyle = 'blue';
+				context.fillStyle = 'blue';
+				context.lineWidth = 5;
+				context.rect(data.x, data.y, 1, 1);
+				context.fill();
+				context.stroke();
 			}
 		});
-	}, []);
-
+	}, [color]);
+	function clearcanvas() {
+		if (!canvasRef.current) {
+			return;
+		}
+		const canvas: HTMLCanvasElement = canvasRef.current;
+		const context1 = canvas.getContext('2d');
+		if (context1) context1.clearRect(0, 0, canvas.width, canvas.height);
+	}
 	return (
 		<div>
 			{seconds}

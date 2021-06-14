@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import Cookies from 'universal-cookie';
- 
+import { post } from '../API';
+import common from '../constant/common';
 const cookies = new Cookies();
-
 const Home = () => {
 	let history = useHistory();
 	const [name, setName] = useState('');
@@ -11,13 +11,27 @@ const Home = () => {
 	function handleChange(e: any) {
 		setName(e.target.value);
 	}
-	function click(e:any) {
+	async function callApi() {
+		try {
+			let res = await post(common.common_url + common.group_join, { name });
+			if (res.status === 200) {
+				cookies.set('name', name);
+				const { data } = res;
+				const { data:{_id} } = data;
+				console.log('_id :>> ',_id);
+				cookies.set('groupId', name);
+				history.push('/game');
+			}
+		} catch (e) {
+			history.push('/home');
+		}
+	}
+	function click(e: any) {
 		e.preventDefault();
 		if (name === '') {
-			setError("please enter Name")
+			setError('please enter Name');
 		} else {
-			cookies.set('name', name);
-			history.push('/game');
+			callApi();
 		}
 	}
 	return (
