@@ -1,38 +1,37 @@
-import Profile from '../assets/image/download.jpeg';
+import { useEffect } from 'react';
 import Draw from '../components/Draw';
 import Chat from '../components/Chat';
+import Users from '../components/Users';
+import common from '../constant/common';
+import { Get } from '../API';
+import Cookies from 'universal-cookie';
+import { useState } from 'react';
+let cookie = new Cookies();
+let grpId = cookie.get('groupId');
 const Game = () => {
+	const [group, setgroup] = useState('');
+	useEffect(() => {
+		getGroup();
+	}, []);
+	async function getGroup() {
+		try {
+			let group = await Get(common.common_url + common.group_get + grpId);
+			setgroup(group.data.userList);
+		} catch (e) {
+			console.log('e :>> ', e);
+		}
+	}
 	return (
-		<div className="md:container md:mx-auto p-1">
-			<div className="grid grid-cols-3 gap-4">
-				<div className=" bg-red-500 p-3 w-full">
-					<ul>
-						<li className="inline-block">
-							<div className="w-12 float-left">#1</div>
-							<div className="w-25 float-left pl-5">
-								<p>Tushar</p>
-								<p>Point 100</p>
-							</div>
-							<div className="w-18 float-left pl-5">
-								<img className="h-12 float-left" src={Profile} alt="demo" />
-							</div>
-						</li>
-						<li className="inline-block">
-							<div className="w-12 float-left">#1</div>
-							<div className="w-25 float-left pl-5">
-								<p>Tushar</p>
-								<p>Point 100</p>
-							</div>
-							<div className="w-18 float-left pl-5">
-								<img className="h-12 float-left" src={Profile} alt="demo" />
-							</div>
-						</li>
-					</ul>
+		<div className="md:container md:mx-auto px-3">
+			
+			<div className="grid grid-cols-12 gap-4 ">
+				<div className="userlist col-span-3">
+					<Users group={group && group} />
 				</div>
-				<div className="draw">
+				<div className="draw col-span-6">
 					<Draw />
 				</div>
-				<div className="chat">
+				<div className="chat col-span-3">
 					<Chat />
 				</div>
 			</div>

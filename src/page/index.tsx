@@ -7,6 +7,7 @@ const cookies = new Cookies();
 const Home = () => {
 	let history = useHistory();
 	const [name, setName] = useState('');
+	const [disabled, setDisabled] = useState(false);
 	const [error, setError] = useState('');
 	function handleChange(e: any) {
 		setName(e.target.value);
@@ -18,8 +19,8 @@ const Home = () => {
 				cookies.set('name', name);
 				const { data } = res;
 				const { data:{_id} } = data;
-				console.log('_id :>> ',_id);
-				cookies.set('groupId', name);
+				cookies.set('groupId', _id);
+				
 				history.push('/game');
 			}
 		} catch (e) {
@@ -28,9 +29,11 @@ const Home = () => {
 	}
 	function click(e: any) {
 		e.preventDefault();
+
 		if (name === '') {
 			setError('please enter Name');
 		} else {
+			setDisabled(true)
 			callApi();
 		}
 	}
@@ -64,6 +67,7 @@ const Home = () => {
 					<button
 						className=" bg-gradient-to-r from-green-400 to-blue-500 hover:from-pink-500 hover:to-yellow-500 text-white font-bold py-2 px-4 rounded"
 						onClick={click}
+						disabled={disabled}
 					>
 						Play
 					</button>

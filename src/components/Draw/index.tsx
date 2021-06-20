@@ -1,8 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import socketIOClient from 'socket.io-client';
-import common from '../../constant/common'
-const ENDPOINT = common.socket_base_url;
-var socket: any;
+// import socketIOClient from 'socket.io-client';
+// import common from '../../constant/common';
+// const ENDPOINT = common.socket_base_url;
+// var socket: any;
 interface CanvasProps {
 	width: number;
 	height: number;
@@ -14,12 +15,10 @@ type Coordinate = {
 };
 const Canvas = ({ width, height }: CanvasProps) => {
 	const [color, setcolor] = useState('#dddddd');
-	const [seconds, setSeconds] = React.useState(10);
-	const SketchRef = useRef('');
-	const skRef = SketchRef.current;
-	const canvasRef = useRef<HTMLCanvasElement>(null);
 	const [isPainting, setIsPainting] = useState(false);
+	const [second, setSecond] = useState(5);
 	const [mousePosition, setMousePosition] = useState<Coordinate | undefined>(undefined);
+	const canvasRef = useRef<HTMLCanvasElement>(null);
 
 	const startPaint = useCallback((event: MouseEvent) => {
 		const coordinates = getCoordinates(event);
@@ -40,18 +39,18 @@ const Canvas = ({ width, height }: CanvasProps) => {
 	}, [startPaint]);
 
 	const paint = useCallback(
-        (event: MouseEvent) => {
-            if (isPainting) {
-                const newMousePosition = getCoordinates(event);
-                if (mousePosition && newMousePosition) {
-                    drawLine(mousePosition, newMousePosition);
-                    setMousePosition(newMousePosition);
-                }
-            }
-        },
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-        [isPainting, mousePosition]
-    );
+		(event: MouseEvent) => {
+			if (isPainting) {
+				const newMousePosition = getCoordinates(event);
+				if (mousePosition && newMousePosition) {
+					drawLine(mousePosition, newMousePosition);
+					setMousePosition(newMousePosition);
+				}
+			}
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[isPainting, mousePosition],
+	);
 
 	useEffect(() => {
 		if (!canvasRef.current) {
@@ -87,12 +86,10 @@ const Canvas = ({ width, height }: CanvasProps) => {
 			return;
 		}
 		const canvas: HTMLCanvasElement = canvasRef.current;
-		let data = {
-			x: event.pageX - canvas.offsetLeft,
-			y: event.pageY - canvas.offsetTop,
-		};
 
-		socket.emit('mouse', data);
+		// var dataURL = canvas.toDataURL();
+
+		// socket.emit('mouse', dataURL);
 		return { x: event.pageX - canvas.offsetLeft, y: event.pageY - canvas.offsetTop };
 	};
 
@@ -104,10 +101,9 @@ const Canvas = ({ width, height }: CanvasProps) => {
 		const canvas: HTMLCanvasElement = canvasRef.current;
 		const context = canvas.getContext('2d');
 		if (context) {
-			context.strokeStyle = 'blue';
+			context.strokeStyle = '#8c50b';
 			context.lineJoin = 'round';
 			context.lineWidth = 5;
-
 			context.beginPath();
 			context.moveTo(originalMousePosition.x, originalMousePosition.y);
 			context.lineTo(newMousePosition.x, newMousePosition.y);
@@ -125,37 +121,33 @@ const Canvas = ({ width, height }: CanvasProps) => {
 	}, [color]);
 
 	useEffect(() => {
-		if (seconds > 0) {
-			setTimeout(() => setSeconds(seconds - 1), 1000);
-		} else {
-			clearcanvas()
-			setTimeout(() => setSeconds(30), 5000);
-		}
-	}, [seconds, skRef]);
-
+		// socket = socketIOClient(ENDPOINT);
+		// socket.on('mouse', function (data: any) {
+		// 	console.log('data :>> ', data);
+		// 	if (!canvasRef.current) {
+		// 		return;
+		// 	}
+		// 	const canvas: HTMLCanvasElement = canvasRef.current;
+		// 	const context = canvas.getContext('2d');
+		// 	if (context) {
+		// 		var image = new Image();
+		// 		image.onload = function () {
+		// 			context.drawImage(image, 0, 0);
+		// 		};
+		// 		image.src = data;
+		// 	}
+		// });
+	});
 	useEffect(() => {
-		socket = socketIOClient(ENDPOINT);
-		socket.on('mouse', function (data: any) {
-			console.log('data :>> ', data);
-			if (!canvasRef.current) {
-				return;
-			}
-
-			const canvas: HTMLCanvasElement = canvasRef.current;
-			const context = canvas.getContext('2d');
-			if (context) {
-				// const img = Canvas.
-				context.beginPath();
-				context.strokeStyle = 'blue';
-				context.fillStyle = 'blue';
-				context.lineWidth = 5;
-				context.rect(data.x, data.y, 1, 1);
-				context.fill();
-				context.stroke();
-			}
-		});
-	}, [color]);
-	function clearcanvas() {
+		if (second > 0) {
+			setTimeout(() => setSecond(second - 1), 1000);
+		} else {
+			Clearcanvas();
+			setTimeout(() => setSecond(50), 5000);
+		}
+	}, [second]);
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	function Clearcanvas() {
 		if (!canvasRef.current) {
 			return;
 		}
@@ -165,7 +157,9 @@ const Canvas = ({ width, height }: CanvasProps) => {
 	}
 	return (
 		<div>
-			{seconds}
+			<div>
+				<p>{second}</p>
+			</div>
 			<div>
 				Current color: {color}
 				<div
@@ -182,7 +176,7 @@ const Canvas = ({ width, height }: CanvasProps) => {
 };
 
 Canvas.defaultProps = {
-	width: 400,
+	width: 620,
 	height: 400,
 };
 export default Canvas;
